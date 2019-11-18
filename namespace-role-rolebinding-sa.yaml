@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: staging
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: crondeploy
+  namespace: staging
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: crondeploy
+  namespace: staging
+rules:
+  - apiGroups: ["extensions"]
+    resources: ["deployments","deployments/scale"]
+    verbs: ["get","list","patch","update","delete"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: crondeploy
+  namespace: staging
+subjects:
+  - kind: ServiceAccount
+    name: crondeploy
+    namespace: staging
+roleRef:
+  kind: Role
+  name: crondeploy
+  apiGroup: rbac.authorization.k8s.io

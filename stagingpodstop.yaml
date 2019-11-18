@@ -1,0 +1,23 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: stopdevdeployment
+  namespace: staging
+spec:
+  schedule: "* 22 * * 1-5"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: crondeploy 
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl 
+            command:
+            - sh
+            - -c 
+            - kubectl scale --replicas=0 $(kubectl get deploy -n staging  -o jsonpath='{range .items[*]}{"deploy/"}{.metadata.name}{" "}{end}{"\n"}') -n staging
+          restartPolicy: OnFailure
