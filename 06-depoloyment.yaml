@@ -1,0 +1,61 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: makemytrip-ms
+    environment: staging
+    tier: backend
+  name: staging-makemytrip-ms
+  namespace: staging
+spec:
+  replicas: 10
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 33%
+      maxSurge: 100%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        environment: staging
+        app: makemytrip-ms
+        tier: backend
+    spec:
+      serviceAccountName: sastagingemakemytrip-ms
+      containers:
+      - name: application
+        image: ngnix
+        env:
+        - name: JAVA_OPTS
+          value: -Xms256m -Xmx512m -server 
+        ports:
+        - containerPort: 8080
+          name: api
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 125
+          periodSeconds: 5
+          timeoutSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 125
+          periodSeconds: 5
+          timeoutSeconds: 10
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 100m
+            memory: 400Mi
+        volumeMounts:
+        - mountPath: /app/config
+          name: application-config
+      volumes:
+      - name: application-config
+        configMap:
+          name: application-config-makemytrip-ms

@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-config-makemytrip-ms
+  namespace: staging
+  labels:
+    app: makemytrip-ms
+    environment: staging
+    tier: backend
+data:
+  application.properties: |-

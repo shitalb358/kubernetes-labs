@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: makemytrip-ms
+  name: staging-makemytrip-ms
+  namespace: staging
+spec:
+  rules:
+  - host: staging-makemytrip-ms.makemytrip.com
+    http:
+      paths:
+      - backend:
+          serviceName: staging-makemytrip-ms
+          servicePort: 8080
+        path: /
+      - backend:
+          serviceName: staging-makemytrip-ms
+          servicePort: 8080
+        path: /actuator/health
+  tls:
+  - hosts:
+    - staging-makemytrip-ms.makemytrip.com

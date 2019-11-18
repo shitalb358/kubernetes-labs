@@ -1,0 +1,16 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: staging-makemytrip-ms
+  namespace: staging
+  labels:
+    app: makemytrip-ms
+    environment: staging
+spec:
+  maxReplicas: 5
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: staging-makemytrip-ms
+  targetCPUUtilizationPercentage: 340
